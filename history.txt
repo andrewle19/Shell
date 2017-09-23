@@ -1,3 +1,2 @@
-ps 
-ps (null) 
 ps & 
+ls & 
