@@ -1,3 +1,9 @@
 ps & 
 ls & 
 cal & 
+date & 
+time & 
+ps -a & 
+date & 
+who & 
+top & 

@@ -72,7 +72,7 @@ void showHistory(FILE *fp, int lineCount)
     {
       fgets(line,MAX_LINE,fp);
       strtok(line,"\n");
-      printf("%i. %s\n",lineCount-i,line);
+      printf("%i. %s\n",i+1,line);
     }
 
   }
@@ -137,6 +137,8 @@ int main(void)
       // parent process
       if(pid > 0)
       {
+        count += 1; // increments count
+        writeFile(fp,args,argc-1); //writes the argument to file
         wait(NULL);
       }
       else
@@ -154,8 +156,7 @@ int main(void)
 
         */
 
-        count++; // increments count
-        writeFile(fp,args,argc-1);
+
 
         // NULL &
         args[argc-2] = NULL;
@@ -176,7 +177,7 @@ int main(void)
 
       if(pid > 0)
       {
-        exit(0);
+        return 0;
       }
       else
       {
