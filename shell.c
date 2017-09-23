@@ -80,6 +80,18 @@ void showHistory(FILE *fp, int lineCount)
   fclose(fp);
 }
 
+
+void writeFile(FILE *fp, char *args[], int argc)
+{
+  fp = fopen("history.txt","a");
+  for(int i = 0; i < argc; i++)
+  {
+    fputs(args[i],fp);
+    fputs(" ",fp);
+  }
+  fputs("\n",fp);
+  fclose(fp);
+}
 int main(void)
 {
   FILE *fp; // file pointer
@@ -129,7 +141,7 @@ int main(void)
       }
       else
       {
-        // opens history file
+        /* opens history file
         fp = fopen("history.txt","a");
         // writes the arguments to the history file
         for(int i = 0; i < argc-1; i++)
@@ -139,10 +151,13 @@ int main(void)
         }
 
         fputs("\n",fp);// writes a newline in
-        count++; // increments count
-        fclose(fp);
 
-        // NULL & 
+        */
+
+        count++; // increments count
+        writeFile(fp,args,argc-1);
+
+        // NULL &
         args[argc-2] = NULL;
         execvp(args[0],args);
 
