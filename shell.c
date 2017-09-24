@@ -98,7 +98,8 @@ void showHistory(FILE *fp, int lineCount)
   fclose(fp);
 }
 
-
+// Writes an argument to the history file
+// PARAMETERS: File pointer, char pointer array, argument count
 void writeFile(FILE *fp, char *args[], int argc)
 {
   fp = fopen("history.txt","a");
@@ -141,29 +142,73 @@ int main(void)
       argc++; // increment. the argument count
     }
 
+  char firstintial = *args[0];
+  pid_t pid; // the process id
 
-    pid_t pid; // the process id
-
-  if (strcmp(args[0],"!!") == 0)
+  if (firstintial == '!')
     {
-      fp = fopen("history.txt","r");
-      for(int i = 0; i < count; i++)
+      if(strcmp(args[0],"!!") == 0)
       {
-        fgets(arg,MAX_LINE,fp);
-      }
-      strtok(arg, "\n"); // tokenize the string taking out newline
-      printf("%s\n",arg);
-      args[0] = strtok(arg," "); // grab the first token
-      argc = 1; //set the argument count
+        fp = fopen("history.txt","r");
+        for(int i = 0; i < count; i++)
+        {
+          fgets(arg,MAX_LINE,fp);
+        }
+        strtok(arg, "\n"); // tokenize the string taking out newline
+        printf("%s\n",arg);
+        args[0] = strtok(arg," "); // grab the first token
+        argc = 1; //set the argument count
 
-      // parse/tokenize the commands into args array
-      while (args[argc-1] != NULL)
-      {
-        args[argc] = strtok(NULL," "); // tokenzie by blank spaces
-        argc++; // increment. the argument count
+        // parse/tokenize the commands into args array
+        while (args[argc-1] != NULL)
+        {
+          args[argc] = strtok(NULL," "); // tokenzie by blank spaces
+          argc++; // increment. the argument count
+        }
+        fclose(fp);
       }
-      fclose(fp);
+      else
+      {
+        args[0] = strtok(args[0],"!");
+        int commandNum = atoi(args[0]);
+
+        if(commandNum > count || commandNum < 0)
+        {
+          printf("%ith command is not in history\n",commandNum);
+        }
+        else
+        {
+          char *traverse = malloc(MAX_LINE);
+          fp = fopen("history.txt","r");
+          for(int i = 0; i < count; i++)
+          {
+
+            if(commandNum == i+1)
+            {
+              fgets(arg,MAX_LINE,fp);
+            }
+            else
+            {
+              fgets(traverse,MAX_LINE,fp);
+            }
+          }
+          strtok(arg, "\n"); // tokenize the string taking out newline
+          printf("%s\n",arg);
+          args[0] = strtok(arg," "); // grab the first token
+          argc = 1; //set the argument count
+
+          // parse/tokenize the commands into args array
+          while (args[argc-1] != NULL)
+          {
+            args[argc] = strtok(NULL," "); // tokenzie by blank spaces
+            argc++; // increment. the argument count
+          }
+          fclose(fp);
+          free(traverse);
+        }
+      }
     }
+
 
 
   // check whether the process should wait for the child procss will run in background

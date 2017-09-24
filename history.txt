@@ -8,7 +8,14 @@ date &
 who &
 time &
 ps -a &
+date &
+ls &
+who & 
+ps & 
+ps -a & 
 ls & 
-ls -a & 
-ls -a & 
-ls -a & 
+time & 
+date & 
+ps & 
+ps & 
+date & 
