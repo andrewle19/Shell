@@ -142,20 +142,24 @@ int main(void)
       argc++; // increment. the argument count
     }
 
-  char firstintial = *args[0];
+  char firstintial = *args[0]; // get the first character of string
   pid_t pid; // the process id
 
+
+  // if the first character is ! means the user wants to acess history
   if (firstintial == '!')
     {
+      // if the user wants the most recent command
       if(strcmp(args[0],"!!") == 0)
       {
+        // open file
         fp = fopen("history.txt","r");
         for(int i = 0; i < count; i++)
         {
           fgets(arg,MAX_LINE,fp);
         }
         strtok(arg, "\n"); // tokenize the string taking out newline
-        printf("%s\n",arg);
+        printf("%s\n",arg); // prints the most recent command
         args[0] = strtok(arg," "); // grab the first token
         argc = 1; //set the argument count
 
@@ -167,33 +171,44 @@ int main(void)
         }
         fclose(fp);
       }
+      // else the user wants a specefic command
       else
       {
-        args[0] = strtok(args[0],"!");
-        int commandNum = atoi(args[0]);
 
+        args[0] = strtok(args[0],"!"); // get string after !
+        int commandNum = atoi(args[0]); // convert string to an int
+
+        // check if the command is out of bounds of history
         if(commandNum > count || commandNum < 0)
         {
           printf("%ith command is not in history\n",commandNum);
         }
+        // go to specefic command
         else
         {
+          // used to buffer file
           char *traverse = malloc(MAX_LINE);
           fp = fopen("history.txt","r");
+
+          // loop through commands
           for(int i = 0; i < count; i++)
           {
-
+            // if i+1 on command line take in the command
             if(commandNum == i+1)
             {
               fgets(arg,MAX_LINE,fp);
             }
+            // else put in traverse
             else
             {
               fgets(traverse,MAX_LINE,fp);
             }
           }
           strtok(arg, "\n"); // tokenize the string taking out newline
+
+
           printf("%s\n",arg);
+
           args[0] = strtok(arg," "); // grab the first token
           argc = 1; //set the argument count
 
@@ -225,23 +240,9 @@ int main(void)
     }
     else
     {
-        /* opens history file
-        fp = fopen("history.txt","a");
-        // writes the arguments to the history file
-        for(int i = 0; i < argc-1; i++)
-        {
-          fputs(args[i],fp);
-          fputs(" ",fp);
-        }
-
-        fputs("\n",fp);// writes a newline in
-
-        */
-
-
-
       // NULL &
       args[argc-2] = NULL;
+      
       execvp(args[0],args);
 
     }
@@ -259,7 +260,12 @@ int main(void)
 
     if(pid > 0)
     {
-      return 0;
+      if(strcmp(args[0],"\n") != 0)
+      {
+        count++; // increment by  count
+        writeFile(fp,args,argc-1); //writes the argument to file
+      }
+
     }
     else
     {

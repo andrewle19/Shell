@@ -10,12 +10,17 @@ time &
 ps -a &
 date &
 ls &
-who & 
-ps & 
-ps -a & 
-ls & 
-time & 
+who &
+ps &
+ps -a &
+ls &
+time &
+date &
+ps &
+ps &
 date & 
+hello 
 ps & 
-ps & 
-date & 
+ls 
+ls 
+exit 
