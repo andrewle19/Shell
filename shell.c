@@ -57,10 +57,14 @@ int countLines(FILE *fp)
   }
 }
 
+// Prints the last 10 Commands
+// PARAMETERS: FIle pointer, the number of lines counted
+
 void showHistory(FILE *fp, int lineCount)
 {
   fp = fopen("history.txt","r");
   char *line = malloc(MAX_LINE);
+  char *lines;
 
   if(fp == NULL)
   {
@@ -68,13 +72,27 @@ void showHistory(FILE *fp, int lineCount)
   }
   else
   {
-    for(int i = 0; i < lineCount; i++)
+    if(lineCount > 10)
     {
-      fgets(line,MAX_LINE,fp);
-      strtok(line,"\n");
-      printf("%i. %s\n",i+1,line);
+        for(int i = 0; i < lineCount; i++)
+        {
+          fgets(line,MAX_LINE,fp);
+          strtok(line,"\n");
+          if(i > lineCount-11)
+          {
+            printf("%i. %s\n",i+1,line);
+          }
+        }
     }
-
+    else
+    {
+      for(int i = 0; i < lineCount; i++)
+      {
+        fgets(line,MAX_LINE,fp);
+        strtok(line,"\n");
+        printf("%i. %s\n",i+1,line);
+      }
+    }
   }
   free(line);
   fclose(fp);
@@ -109,9 +127,8 @@ int main(void)
 
     printf("bs>");
     fgets(arg,MAX_LINE,stdin); // get the input of user
-    strtok(arg, "\n"); // tokenize the string taking out newline
     fflush(stdout); // clears input buffer
-
+    strtok(arg, "\n"); // tokenize the string taking out newline
     run = quit(arg); // check if user wants to quit or not
 
     args[0] = strtok(arg," "); // grab the first token
@@ -125,24 +142,44 @@ int main(void)
     }
 
 
-    pid_t pid;
+    pid_t pid; // the process id
 
-
-    // check whether the process should wait for the child procss will run in background
-    if (strcmp(args[argc-2],"&") == 0)
+  if (strcmp(args[0],"!!") == 0)
     {
-
-      // fork the process
-      pid = fork();
-      // parent process
-      if(pid > 0)
+      fp = fopen("history.txt","r");
+      for(int i = 0; i < count; i++)
       {
-        count += 1; // increments count
-        writeFile(fp,args,argc-1); //writes the argument to file
-        wait(NULL);
+        fgets(arg,MAX_LINE,fp);
       }
-      else
+      strtok(arg, "\n"); // tokenize the string taking out newline
+      printf("%s\n",arg);
+      args[0] = strtok(arg," "); // grab the first token
+      argc = 1; //set the argument count
+
+      // parse/tokenize the commands into args array
+      while (args[argc-1] != NULL)
       {
+        args[argc] = strtok(NULL," "); // tokenzie by blank spaces
+        argc++; // increment. the argument count
+      }
+      fclose(fp);
+    }
+
+
+  // check whether the process should wait for the child procss will run in background
+  if (strcmp(args[argc-2],"&") == 0)
+  {
+      // fork the process
+    pid = fork();
+      // parent process
+    if(pid > 0)
+    {
+      count += 1; // increments count
+      writeFile(fp,args,argc-1); //writes the argument to file
+      wait(NULL);
+    }
+    else
+    {
         /* opens history file
         fp = fopen("history.txt","a");
         // writes the arguments to the history file
@@ -158,36 +195,37 @@ int main(void)
 
 
 
-        // NULL &
-        args[argc-2] = NULL;
-        execvp(args[0],args);
+      // NULL &
+      args[argc-2] = NULL;
+      execvp(args[0],args);
 
-      }
     }
-    // if the user wants the history of commands
-    else if(strcmp(args[0],"history") == 0)
+  }
+  // if the user wants the history of commands
+  else if(strcmp(args[0],"history") == 0)
+  {
+    showHistory(fp,count);
+  }
+  // executes the command in child but parent wont wait so it will exit
+  else
+  {
+    // fork the process
+    pid = fork();
+
+    if(pid > 0)
     {
-      showHistory(fp,count);
+      return 0;
     }
-    // executes the command in child but parent wont wait so it will exit
     else
     {
-      // fork the process
-      pid = fork();
+      execvp(args[0],args);
 
-      if(pid > 0)
-      {
-        return 0;
-      }
-      else
-      {
-        execvp(args[0],args);
-
-        exit(0);
-      }
+      exit(0);
     }
+  }
 
-    }
+}
+
 free(arg);
 return 0;
 }

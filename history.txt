@@ -1,9 +1,14 @@
-ps & 
+ps &
+ls &
+cal &
+date &
+time &
+ps -a &
+date &
+who &
+time &
+ps -a &
 ls & 
-cal & 
-date & 
-time & 
-ps -a & 
-date & 
-who & 
-top & 
+ls -a & 
+ls -a & 
+ls -a & 
